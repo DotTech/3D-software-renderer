@@ -22,7 +22,7 @@ namespace TechEngine.Engine
         {
             Setup();
 
-            model = ModelFactory.CreateBunny();
+            model = ModelFactory.CreateCube();
 
             timerUpdate.Enabled = true;
         }
@@ -149,6 +149,7 @@ namespace TechEngine.Engine
         private void UpdateLog()
         {
             renderer.SetLogValue("scale", scale);
+            renderer.SetLogValue("camera", camera);
             renderer.SetLogValue("rotation", model.Rotation);
             renderer.SetLogValue("position", model.Position);
             renderer.SetLogValue("pivot", model.Pivot);

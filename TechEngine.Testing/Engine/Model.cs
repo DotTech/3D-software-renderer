@@ -8,8 +8,19 @@ namespace TechEngine.Engine
 {
     public class Model
     {
+        /// <summary>
+        /// Position in world space
+        /// </summary>
         public Vector3 Position { get; set; }
+
+        /// <summary>
+        /// Rotation around model axis
+        /// </summary>
         public Vector3 Rotation { get; set; }
+
+        /// <summary>
+        /// Rotation point (automatically centered in object space)
+        /// </summary>
         public Vector3 Pivot { get; set; }
 
         public List<Vertex> Vertices { get; private set; }
@@ -25,6 +36,9 @@ namespace TechEngine.Engine
             Pivot = null;
         }
 
+        /// <summary>
+        /// Center the pivot in object space
+        /// </summary>
         private void CenterPivot()
         {
             Pivot = new Vector3(0, 0, 0);
@@ -46,6 +60,9 @@ namespace TechEngine.Engine
             Pivot = min + offset;
         }
 
+        /// <summary>
+        /// Perform rotation
+        /// </summary>
         private void Rotate()
         {
             if (Pivot == null)
@@ -90,7 +107,7 @@ namespace TechEngine.Engine
         {
             foreach (Vertex vertex in Vertices)
             {
-                vertex.Transformed += camera;
+                vertex.Transformed -= camera;
             }
         }
 
@@ -127,8 +144,13 @@ namespace TechEngine.Engine
         public void Transform(Vector3 camera, double scale)
         {
             Rotate();
-            TransformToCameraSpace(camera);
+
+            // Translate model coordinates from world space to camera space
+            // The camera will then be fixed at 0,0,0 in world space
+            //TransformToCameraSpace(camera);
+
             BackfaceCulling();
+
             Project(camera, scale);
         }
     }
