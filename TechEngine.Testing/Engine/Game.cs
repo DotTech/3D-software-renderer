@@ -21,7 +21,8 @@ namespace TechEngine.Engine
         public void Start()
         {
             Setup();
-            CreateModel();
+
+            model = ModelFactory.CreateBunny();
 
             timerUpdate.Enabled = true;
         }
@@ -38,7 +39,7 @@ namespace TechEngine.Engine
 
             timerUpdate = new Timer();
             timerUpdate.Tick += new EventHandler(Update);
-            timerUpdate.Interval = 5;
+            timerUpdate.Interval = 10;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -50,46 +51,12 @@ namespace TechEngine.Engine
         {
             InputHandler.OnKeyUp(this, e);
         }
-
-        private void CreateModel()
-        {
-            model = new Model();
-            model.Rotation = new Vector3(130, 260, 30);
-
-            model.Vertices.Add(new Vertex(-100, 100, -100));   // 0
-            model.Vertices.Add(new Vertex(100, 100, -100));    // 1
-            model.Vertices.Add(new Vertex(-100, -100, -100));  // 2
-            model.Vertices.Add(new Vertex(-100, 100, 100));    // 3
-            model.Vertices.Add(new Vertex(100, 100, 100));     // 4
-            model.Vertices.Add(new Vertex(-100, -100, 100));   // 5            
-            model.Vertices.Add(new Vertex(100, -100, -100));   // 6
-            model.Vertices.Add(new Vertex(100, -100, 100));    // 7
-
-            model.Triangles.Add(new Triangle(0, 1, 2, Color.FromArgb(140, 140, 140).ToArgb()));
-            model.Triangles.Add(new Triangle(1, 6, 2, Color.FromArgb(140, 140, 140).ToArgb()));
-
-            model.Triangles.Add(new Triangle(1, 4, 6, Color.FromArgb(120, 120, 120).ToArgb()));
-            model.Triangles.Add(new Triangle(4, 7, 6, Color.FromArgb(120, 120, 120).ToArgb()));
-
-            model.Triangles.Add(new Triangle(4, 3, 7, Color.FromArgb(140, 140, 140).ToArgb()));
-            model.Triangles.Add(new Triangle(3, 5, 7, Color.FromArgb(140, 140, 140).ToArgb()));
-
-            model.Triangles.Add(new Triangle(3, 0, 5, Color.FromArgb(120, 120, 120).ToArgb()));
-            model.Triangles.Add(new Triangle(0, 2, 5, Color.FromArgb(120, 120, 120).ToArgb()));
-
-            model.Triangles.Add(new Triangle(3, 4, 0, Color.FromArgb(100, 100, 100).ToArgb()));
-            model.Triangles.Add(new Triangle(4, 1, 0, Color.FromArgb(100, 100, 100).ToArgb()));
-
-            model.Triangles.Add(new Triangle(2, 6, 5, Color.FromArgb(100, 100, 100).ToArgb()));
-            model.Triangles.Add(new Triangle(6, 7, 5, Color.FromArgb(100, 100, 100).ToArgb()));
-        }
-
+        
         private void Update(object sender, EventArgs e)
         {
             HandleKeys();
-            
-            Projection();
-            model.BackfaceCulling();
+
+            model.Transform(camera, scale);
 
             UpdateLog();
 
@@ -177,37 +144,6 @@ namespace TechEngine.Engine
             {
                 model.Position.Z--;
             }
-
-            model.Rotate();
-        }
-
-        private void Projection()
-        {
-            var sw = Stopwatch.StartNew();
-
-            for (int v = 0; v < model.Vertices.Count; v++)
-            {
-                Vertex vertex = model.Vertices[v];
-
-                // Perspective projection
-                double pz = camera.Z + vertex.Transformed.Z;
-                vertex.Projected.X = (int)(((camera.Z * (vertex.Transformed.X - camera.X)) / pz * scale) + camera.X);
-                vertex.Projected.Y = -(int)(((camera.Z * (vertex.Transformed.Y - camera.Y)) / pz * scale) + camera.Y);
-
-                // Scaling and positioning
-                vertex.Projected.X += (int)(model.Position.X + Size.Width / 2);
-                vertex.Projected.Y += (int)(model.Position.Y + Size.Height / 2);
-            }
-
-            renderer.SetLogValue("Game.Projection()", sw.ElapsedMilliseconds);
-        }
-
-        private void Culling()
-        {
-            var sw = Stopwatch.StartNew();
-
-
-            renderer.SetLogValue("Game.Culling()", sw.ElapsedMilliseconds);
         }
 
         private void UpdateLog()
@@ -215,6 +151,7 @@ namespace TechEngine.Engine
             renderer.SetLogValue("scale", scale);
             renderer.SetLogValue("rotation", model.Rotation);
             renderer.SetLogValue("position", model.Position);
+            renderer.SetLogValue("pivot", model.Pivot);
         }
 
         private void Render()

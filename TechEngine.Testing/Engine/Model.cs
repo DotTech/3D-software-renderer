@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace TechEngine.Engine
 {
@@ -9,7 +10,8 @@ namespace TechEngine.Engine
     {
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
-        
+        public Vector3 Pivot { get; set; }
+
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
         
@@ -20,25 +22,36 @@ namespace TechEngine.Engine
 
             Position = new Vector3(0, 0, 0);
             Rotation = new Vector3(0, 0, 0);
+            Pivot = null;
         }
-        
-        public void Rotate()
+
+        private void CenterPivot()
         {
-            Vector3 pivot = new Vector3(0, 0, 0);
-            
-            /*
-            var zx = parseInt(px * Math.cos(TD.Global.rotation.z.radians) - py * Math.sin(TD.Global.rotation.z.radians) - px),
-				zy = parseInt(px * Math.sin(TD.Global.rotation.z.radians) + py * Math.cos(TD.Global.rotation.z.radians) - py),
-				yx = parseInt((px + zx) * Math.cos(TD.Global.rotation.y.radians) - pz * Math.sin(TD.Global.rotation.y.radians) - (px + zx)),
-				yz = parseInt((px + zx) * Math.sin(TD.Global.rotation.y.radians) + pz * Math.cos(TD.Global.rotation.y.radians) - pz),
-				xy = parseInt((py + zy) * Math.cos(TD.Global.rotation.x.radians) - (pz + yz) * Math.sin(TD.Global.rotation.x.radians) - (py + zy)),
-				xz = parseInt((py + zy) * Math.sin(TD.Global.rotation.x.radians) + (pz + yz) * Math.cos(TD.Global.rotation.x.radians) - (pz + yz)),
-				rotationOffset = {
-					x: yx + zx,
-					y: zy + xy,
-					z: xz + yz
-				};
-            */
+            Pivot = new Vector3(0, 0, 0);
+
+            // Find minimum and maximum coord for each axis
+            Vector3 min = new Vector3(
+                Vertices.Min(v => v.X),
+                Vertices.Min(v => v.Y),
+                Vertices.Min(v => v.Z)
+            );
+
+            Vector3 max = new Vector3(
+                Vertices.Max(v => v.X),
+                Vertices.Max(v => v.Y),
+                Vertices.Max(v => v.Z)
+            );
+
+            Vector3 offset = (max - min) / 2;
+            Pivot = min + offset;
+        }
+
+        private void Rotate()
+        {
+            if (Pivot == null)
+            {
+                CenterPivot();
+            }
 
             foreach (Vertex v in Vertices)
             {
@@ -46,9 +59,9 @@ namespace TechEngine.Engine
                 double ry = Rotation.Y.ToRadians();
                 double rz = Rotation.Z.ToRadians();
 
-                double px = v.X - pivot.X;
-                double py = v.Y - pivot.Y;
-                double pz = v.Z - pivot.Z;
+                double px = v.X - Pivot.X;
+                double py = v.Y - Pivot.Y;
+                double pz = v.Z - Pivot.Z;
 
                 double zx = px * Math.Cos(rz) - py * Math.Sin(rz) - px;
                 double zy = px * Math.Sin(rz) + py * Math.Cos(rz) - py;
@@ -67,33 +80,56 @@ namespace TechEngine.Engine
             }
         }
 
-        public void Rotate(Vector3 angles)
+        private void Rotate(Vector3 angles)
         {
             Rotation = angles;
             Rotate();
         }
 
-        /// <summary>
-        /// Flag triangles that are facing backwards and dont need to be rendered
-        /// </summary>
-        public void BackfaceCulling()
+        private void TransformToCameraSpace(Vector3 camera)
         {
-            foreach (Triangle t in Triangles)
+            foreach (Vertex vertex in Vertices)
             {
-                Vector3 v1 = Vertices[t.Vertices[0]].Projected;
-                Vector3 v2 = Vertices[t.Vertices[1]].Projected;
-                Vector3 v3 = Vertices[t.Vertices[2]].Projected;
-
-                // Edge vectors
-                Vector3 e1 = v2 - v1;
-                Vector3 e2 = v3 - v1;
-
-                // Calculate the triangle normal
-                Vector3 normal = e1.CrossProduct(e2) / e1.CrossProduct(e2).Magnitude();
-
-                // If it's negative, the triangle is backfacing and can be ignored
-                t.BackFacing = normal.Z < 0;
+                vertex.Transformed += camera;
             }
+        }
+
+        private void BackfaceCulling()
+        {
+            foreach (Triangle triangle in Triangles)
+            {
+                Vector3 n = triangle.SurfaceNormal().Normalize();
+                double z = Math.Round(n.Z, 1);
+
+                triangle.IsBackFaced = z >= 0;
+            }
+        }
+
+        private void Project(Vector3 camera, double scale)
+        {
+            foreach (Vertex vertex in Vertices)
+            {
+                // Perspective projection
+                double pz = camera.Z + vertex.Transformed.Z;
+                vertex.Projected.X = (int)(((camera.Z * (vertex.Transformed.X - camera.X)) / pz * scale) + camera.X);
+                vertex.Projected.Y = -(int)(((camera.Z * (vertex.Transformed.Y - camera.Y)) / pz * scale) + camera.Y);
+
+                // Scaling and positioning
+                vertex.Projected.X += (int)(Position.X + 640 / 2);
+                vertex.Projected.Y += (int)(Position.Y + 480 / 2);
+            }
+        }
+
+        /// <summary>
+        /// Performs all transformations required for one rendering cycle
+        /// </summary>
+        /// <param name="camera"></param>
+        public void Transform(Vector3 camera, double scale)
+        {
+            Rotate();
+            TransformToCameraSpace(camera);
+            BackfaceCulling();
+            Project(camera, scale);
         }
     }
 }

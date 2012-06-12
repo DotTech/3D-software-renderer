@@ -23,8 +23,7 @@ namespace TechEngine.Engine
 
         public static Vector3 operator /(Vector3 a, double b)
         {
-            double scalar = 1 / b;
-            return new Vector3(a.X * scalar, a.Y * scalar, a.Z * scalar);
+            return new Vector3(a.X / b, a.Y / b, a.Z / b);
         }
 
         public Vector3()
@@ -46,11 +45,11 @@ namespace TechEngine.Engine
         /// <summary>
         /// Compute the dotproduct over this vector and vector b
         /// </summary>
-        /// <param name="b"></param>
+        /// <param name="rvalue"></param>
         /// <returns></returns>
-        public double DotProduct(Vector3 b)
+        public double DotProduct(Vector3 rvalue)
         {
-            return X * b.X + Y * b.Y + Z * b.Z;
+            return X * rvalue.X + Y * rvalue.Y + Z * rvalue.Z;
         }
 
         /// <summary>
@@ -69,7 +68,13 @@ namespace TechEngine.Engine
 
         public double Magnitude()
         {
-            return Math.Sqrt(Math.Abs(X * 2 + Y * 2 + Z * 2));
+            return Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
+        public Vector3 Normalize()
+        {
+            var m = Magnitude();
+            return new Vector3(X / m, Y / m, Z / m);
         }
     }
 }

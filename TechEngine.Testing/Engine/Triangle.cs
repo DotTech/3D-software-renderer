@@ -8,19 +8,37 @@ namespace TechEngine.Engine
 {
     public class Triangle
     {
-        public int[] Vertices { get; set; }
-        public bool BackFacing { get; set; }
-        public int FillColor { get; set; }
+        public Vertex[] Vertices { get; set; }
+        public int? FillColor { get; set; }
+        public int BorderColor { get; set; }
+        public bool IsBackFaced { get; set; }
 
-        public Triangle(int i0, int i1, int i2)
+        public Triangle(Vertex a, Vertex b, Vertex c)
         {
-            Vertices = new int[3] { i0, i1, i2 };
+            Vertices = new Vertex[3] { a, b, c };
         }
 
-        public Triangle(int i0, int i1, int i2, int fillColor)
-            : this(i0, i1, i2)
+        public Triangle(Vertex a, Vertex b, Vertex c, int borderColor, int? fillColor = null)
+            : this(a, b, c)
         {
             FillColor = fillColor;
+            BorderColor = borderColor;
+        }
+
+        /// <summary>
+        /// Calculate the normal for this triangle
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 SurfaceNormal()
+        {
+            Vector3 a = Vertices[0].Transformed;
+            Vector3 b = Vertices[1].Transformed;
+            Vector3 c = Vertices[2].Transformed;
+
+            Vector3 e1 = b - a;
+            Vector3 e2 = c - a;
+
+            return e1.CrossProduct(e2);
         }
     }
 }

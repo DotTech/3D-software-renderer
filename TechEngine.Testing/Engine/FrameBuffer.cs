@@ -109,114 +109,80 @@ namespace TechEngine.Engine
         /// <param name="model"></param>
         public void DrawModel(Model model)
         {
-            foreach (Vertex v in model.Vertices)
-            {
-                DrawPixel(v.Projected, Color.Red.ToArgb());
-            }
+            //foreach (Vertex v in model.Vertices)
+            //{
+            //    DrawPixel(v.Projected, Color.Red.ToArgb());
+            //}
 
-            foreach (Triangle t in model.Triangles.Where(x => !x.BackFacing))
+            foreach (Triangle t in model.Triangles.Where(x => !x.IsBackFaced))
             {
-                DrawTriangle(new Vertex[] { 
-                    model.Vertices[t.Vertices[0]],
-                    model.Vertices[t.Vertices[1]],
-                    model.Vertices[t.Vertices[2]]
-                }, t.FillColor, t.FillColor);
+                DrawTriangle(t);
             }
         }
 
         /// <summary>
-        /// Draw a (filled) triangle
+        /// Draw a (filled) triangle to the framebuffer
         /// </summary>
         /// <remarks>http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html</remarks>
         /// <param name="vertices"></param>
         /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void DrawTriangle(Vertex[] vertices, int bordercolor, int? fillcolor = null)
+        public void DrawTriangle(Triangle triangle)
         {
-            double dx1 = 0;
-            double dx2 = 0;
-            double dx3 = 0;
-            double sx = 0;
-            double sy = 0;
-            double ex = 0;
-            double ey = 0;
+            Vertex[] sortedv = new Vertex[3];
+            triangle.Vertices.CopyTo(sortedv, 0);
 
-
-            Vertex[] sorted = new Vertex[3];
-            vertices.CopyTo(sorted, 0);
-
-            Array.Sort(vertices, delegate(Vertex v1, Vertex v2)
+            Array.Sort(sortedv, delegate(Vertex v1, Vertex v2)
             {
                 return v1.Projected.Y.CompareTo(v2.Projected.Y);
             });
 
-            Vector3 a = vertices[0].Projected;
-            Vector3 b = vertices[1].Projected;
-            Vector3 c = vertices[2].Projected;
+            Vector3 a = sortedv[0].Projected;
+            Vector3 b = sortedv[1].Projected;
+            Vector3 c = sortedv[2].Projected;
 
-            if (b.Y - a.Y > 0) dx1 = (double)(b.X - a.X) / (double)(b.Y - a.Y);
-            if (c.Y - a.Y > 0) dx2 = (double)(c.X - a.X) / (double)(c.Y - a.Y);
-            if (c.Y - b.Y > 0) dx3 = (double)(c.X - b.X) / (double)(c.Y - b.Y);
+            double dx1 = (b.Y - a.Y > 0) ? (double)(b.X - a.X) / (double)(b.Y - a.Y) : 0;
+            double dx2 = (c.Y - a.Y > 0) ? (double)(c.X - a.X) / (double)(c.Y - a.Y) : 0;
+            double dx3 = (c.Y - b.Y > 0) ? (double)(c.X - b.X) / (double)(c.Y - b.Y) : 0;
 
-            ex = (double)a.X;
-            ey = (double)a.Y;
-            sx = (double)a.X;
-            sy = (double)a.Y;
+            double ex = (double)a.X;
+            double sx = (double)a.X;
+            double sy = (double)a.Y;
 
-            if (dx1 > dx2)
+            for (; sy <= b.Y; sy++, sx += dx1, ex += dx2)
             {
-                for (; sy <= b.Y; sy++, ey++, sx += dx2, ex += dx1)
-                {
-                    if (fillcolor.HasValue)
-                    {
-                        DrawLine((int)sx, (int)sy, (int)ex, (int)sy, fillcolor.Value);
-                    }
-
-                    DrawPixel((int)sx, (int)sy, bordercolor);
-                    DrawPixel((int)ex, (int)sy, bordercolor);
-                }
-
-                ex = b.X;
-                ey = b.Y;
-
-                for (; sy <= c.Y; sy++, ey++, sx += dx2, ex += dx3)
-                {
-                    if (fillcolor.HasValue)
-                    {
-                        DrawLine((int)sx, (int)sy, (int)ex, (int)sy, fillcolor.Value);
-                    }
-
-                    DrawPixel((int)sx, (int)sy, bordercolor);
-                    DrawPixel((int)ex, (int)sy, bordercolor);
-                }
+                DrawTriangleScanline(sx, ex, sy, triangle.BorderColor, triangle.FillColor);
             }
-            else
+
+            sx = b.X;
+
+            for (; sy <= c.Y; sy++, sx += dx3, ex += dx2)
             {
-                for (; sy <= b.Y; sy++, ey++, sx += dx1, ex += dx2)
-                {
-                    if (fillcolor.HasValue)
-                    {
-                        DrawLine((int)sx, (int)sy, (int)ex, (int)sy, fillcolor.Value);
-                    }
-
-                    DrawPixel((int)sx, (int)sy, bordercolor);
-                    DrawPixel((int)ex, (int)sy, bordercolor);
-                }
-
-                sx = b.X;
-                sy = b.Y;
-
-                for (; sy <= c.Y; sy++, ey++, sx += dx3, ex += dx2)
-                {
-                    if (fillcolor.HasValue)
-                    {
-                        DrawLine((int)sx, (int)sy, (int)ex, (int)sy, fillcolor.Value);
-                    }
-
-                    DrawPixel((int)sx, (int)sy, bordercolor);
-                    DrawPixel((int)ex, (int)sy, bordercolor);
-                }
+                DrawTriangleScanline(sx, ex, sy, triangle.BorderColor, triangle.FillColor);
             }
+        }
+
+        /// <summary>
+        /// Draw one horizontal scanline of a triangle
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y"></param>
+        /// <param name="bordercolor"></param>
+        /// <param name="fillcolor"></param>
+        private void DrawTriangleScanline(double x0, double x1, double y, int bordercolor, int? fillcolor)
+        {
+            int sx = (int)x0;
+            int ex = (int)x1;
+            int sy = (int)y;
+
+            if (fillcolor.HasValue)
+            {
+                DrawLine(sx, sy, ex, sy, fillcolor.Value);
+            }
+
+            DrawPixel(sx, sy, bordercolor);
+            DrawPixel(ex, sy, bordercolor);
         }
     }
 }
