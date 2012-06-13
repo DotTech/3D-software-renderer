@@ -56,6 +56,7 @@
     <Compile Include="Engine\Game.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Engine\Logger.cs" />
     <Compile Include="Engine\Model.cs" />
     <Compile Include="Engine\ModelFactory.cs" />
     <Compile Include="Engine\Triangle.cs" />

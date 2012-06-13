@@ -22,7 +22,15 @@ namespace TechEngine.Engine
         {
             Setup();
 
-            model = ModelFactory.CreateCube();
+            var sw = Stopwatch.StartNew();
+            //model = ModelFactory.CreateTestObject();
+            model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\bunny.ply", 1000);
+            //model = ModelFactory.CreateFromFile(@"C:\Users\Ruud\Desktop\Armadillo2.ply", 5);
+            //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\horseasc.ply", 1000);
+            //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\ateneav.ply", 0.1);
+            //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\pots.ply", 1);
+            //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\balls.ply", 1);
+            Logger.Value("model load", sw.ElapsedMilliseconds);
 
             timerUpdate.Enabled = true;
         }
@@ -148,11 +156,11 @@ namespace TechEngine.Engine
 
         private void UpdateLog()
         {
-            renderer.SetLogValue("scale", scale);
-            renderer.SetLogValue("camera", camera);
-            renderer.SetLogValue("rotation", model.Rotation);
-            renderer.SetLogValue("position", model.Position);
-            renderer.SetLogValue("pivot", model.Pivot);
+            Logger.Value("scale", scale);
+            Logger.Value("camera", camera);
+            Logger.Value("rotation", model.Rotation);
+            Logger.Value("position", model.Position);
+            Logger.Value("pivot", model.Pivot);
         }
 
         private void Render()
@@ -161,19 +169,19 @@ namespace TechEngine.Engine
 
             frame.Clear();
             frame.DrawModel(model);
-            renderer.SetLogValue("frame.DrawModel()", sw.ElapsedMilliseconds);
+            Logger.Value("frame.DrawModel()", sw.ElapsedMilliseconds);
 
             sw.Restart();
             renderer.SetBackbuffer(frame);
-            renderer.SetLogValue("renderer.SetBackbuffer()", sw.ElapsedMilliseconds);
+            Logger.Value("renderer.SetBackbuffer()", sw.ElapsedMilliseconds);
 
             sw.Restart();
             renderer.SwapBuffer();
-            renderer.SetLogValue("renderer.SwapBuffer()", sw.ElapsedMilliseconds);
+            Logger.Value("renderer.SwapBuffer()", sw.ElapsedMilliseconds);
 
             sw.Restart();
             renderer.Update();
-            renderer.SetLogValue("renderer.Update()", sw.ElapsedMilliseconds);
+            Logger.Value("renderer.Update()", sw.ElapsedMilliseconds);
         }
     }
 }

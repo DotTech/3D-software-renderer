@@ -14,7 +14,7 @@ namespace TechEngine.Engine
         private int[] backBuffer;
         private Bitmap screenBuffer;
 
-        private Dictionary<string, object> logValues = new Dictionary<string, object>();
+        
         private Stopwatch swUpdate;
 
         public int FPS { get; set; }
@@ -32,23 +32,6 @@ namespace TechEngine.Engine
             swUpdate.Start();
 
             Initialized = true;
-        }
-
-        /// <summary>
-        /// Create or update a parameter that should be displayed in the debug log
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        public void SetLogValue(string key, object value)
-        {
-            if (!logValues.Keys.Any(x => x == key))
-            {
-                logValues.Add(key, value);
-            }
-            else
-            {
-                logValues[key] = value;
-            }
         }
 
         /// <summary>
@@ -95,6 +78,8 @@ namespace TechEngine.Engine
         public new void Update()
         {
             FPS = 1000 / (int)swUpdate.ElapsedMilliseconds;
+            Logger.Value("FPS", FPS);
+
             swUpdate.Restart();
             
             base.Invalidate();
@@ -111,14 +96,7 @@ namespace TechEngine.Engine
 
             g.DrawImageUnscaled(screenBuffer, new Point(0, 0));
 
-            // Draw the debug log values
-            string log = String.Format("FPS: {0}\r\n", FPS);
-            foreach (string key in logValues.Keys)
-            {
-                log += String.Format("{0}: {1}\r\n", key, logValues[key]);
-            }
-
-            TextRenderer.DrawText(g, log, new Font(FontFamily.GenericSansSerif, 8), new Point(10, 10), Color.White);
+            TextRenderer.DrawText(g, Logger.Report(), new Font(FontFamily.GenericSansSerif, 8), new Point(10, 10), Color.White);
         }
     }
 }

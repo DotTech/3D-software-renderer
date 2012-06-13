@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace TechEngine
 {
@@ -11,6 +12,7 @@ namespace TechEngine
         [STAThread]
         public static void Main()
         {
+            Application.CurrentCulture = new CultureInfo("en-US");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

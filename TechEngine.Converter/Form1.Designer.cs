@@ -33,6 +33,8 @@
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnConvert = new System.Windows.Forms.Button();
+            this.txtScalar = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -50,11 +52,12 @@
             this.txtSourceFile.Name = "txtSourceFile";
             this.txtSourceFile.Size = new System.Drawing.Size(307, 20);
             this.txtSourceFile.TabIndex = 1;
-            this.txtSourceFile.Text = "C:\\Users\\Ruud\\Desktop\\bun_zipper_res4.ply";
+            this.txtSourceFile.Text = "C:\\Users\\Ruud\\Desktop\\armadillo2.ply";
+            this.txtSourceFile.TextChanged += new System.EventHandler(this.txtSourceFile_TextChanged);
             // 
             // txtOutput
             // 
-            this.txtOutput.Location = new System.Drawing.Point(15, 59);
+            this.txtOutput.Location = new System.Drawing.Point(12, 151);
             this.txtOutput.Multiline = true;
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -64,7 +67,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 43);
+            this.label2.Location = new System.Drawing.Point(9, 135);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 3;
@@ -80,11 +83,30 @@
             this.btnConvert.UseVisualStyleBackColor = true;
             this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
             // 
+            // txtScalar
+            // 
+            this.txtScalar.Location = new System.Drawing.Point(107, 43);
+            this.txtScalar.Name = "txtScalar";
+            this.txtScalar.Size = new System.Drawing.Size(36, 20);
+            this.txtScalar.TabIndex = 5;
+            this.txtScalar.Text = "1.0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 46);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Coordinate scalar";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 482);
+            this.ClientSize = new System.Drawing.Size(610, 574);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtScalar);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtOutput);
@@ -104,6 +126,8 @@
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnConvert;
+        private System.Windows.Forms.TextBox txtScalar;
+        private System.Windows.Forms.Label label3;
     }
 }
 

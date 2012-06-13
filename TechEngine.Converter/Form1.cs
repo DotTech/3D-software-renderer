@@ -25,7 +25,7 @@ namespace TechEngine.Converter
             var lines = File.ReadLines(txtSourceFile.Text);
 
             int readmode = 0;       // 0=header, 1=vertices, 2=triangles, 3=done
-            double scalar = 1000;
+            double scalar = Convert.ToDouble(txtScalar.Text);
             int vertexcount = 0;
             int trianglecount = 0;
 
@@ -59,8 +59,8 @@ namespace TechEngine.Converter
 
                 if (readmode == 1)
                 {
-                    double[] values = line.Trim().Split(' ').Select(x => Convert.ToDouble(x) * scalar).ToArray();
-                    output.AppendFormat("model.Vertices.Add(new Vertex({0}, {1}, {2}, {3}));\r\n", values[0], values[1], values[2], values[4] / scalar);
+                    double[] values = line.Trim().Split(' ').Select(x => Math.Round(Convert.ToDouble(x) * scalar)).ToArray();
+                    output.AppendFormat("model.Vertices.Add(new Vertex({0}, {1}, {2}, {3}));\r\n", values[0], values[1], values[2], (values.Length >= 5) ? (values[4] / scalar) * 2 : 1);
 
                     if (++readvertices >= vertexcount)
                     {
@@ -88,6 +88,16 @@ namespace TechEngine.Converter
         private string ReverseString(string s)
         {
             return new string(s.ToCharArray().Reverse().ToArray());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtSourceFile_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

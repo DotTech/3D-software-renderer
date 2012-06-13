@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace TechEngine.Engine
 {
@@ -36,6 +37,16 @@ namespace TechEngine.Engine
             Pivot = null;
         }
 
+        public void AddVertex(double x, double y, double z, double intensity = 1)
+        {
+            Vertices.Add(new Vertex(x, y, z, intensity));
+        }
+
+        public void AddTriangle(int v0, int v1, int v2)
+        {
+            Triangles.Add(new Triangle(Vertices[v0], Vertices[v1], Vertices[v2], Color.Red.ToArgb(), Color.Gray.ToArgb()));
+        }
+
         /// <summary>
         /// Center the pivot in object space
         /// </summary>
@@ -44,6 +55,27 @@ namespace TechEngine.Engine
             Pivot = new Vector3(0, 0, 0);
 
             // Find minimum and maximum coord for each axis
+            /*Vector3 min = new Vector3(
+                Vertices.Min(v => v.X),
+                Vertices.Min(v => v.Y),
+                Vertices.Min(v => v.Z)
+            );
+
+            Vector3 max = new Vector3(
+                Vertices.Max(v => v.X),
+                Vertices.Max(v => v.Y),
+                Vertices.Max(v => v.Z)
+            );
+
+            Vector3 offset = (max - min) / 2;
+            Pivot = min + offset;*/
+        }
+
+        /// <summary>
+        /// Adjust vertex coordinates so that point 0,0,0 is the center of the model
+        /// </summary>
+        public void CenterModel()
+        {
             Vector3 min = new Vector3(
                 Vertices.Min(v => v.X),
                 Vertices.Min(v => v.Y),
@@ -57,7 +89,13 @@ namespace TechEngine.Engine
             );
 
             Vector3 offset = (max - min) / 2;
-            Pivot = min + offset;
+
+            Vertices.ForEach(delegate(Vertex v)
+            {
+                v.X += 0 - min.X - offset.X;
+                v.Y += 0 - min.Y - offset.Y;
+                v.Z += 0 - min.Z - offset.Z;
+            });
         }
 
         /// <summary>
@@ -116,13 +154,28 @@ namespace TechEngine.Engine
             foreach (Triangle triangle in Triangles)
             {
                 Vector3 n = triangle.SurfaceNormal().Normalize();
-                double z = Math.Round(n.Z, 1);
-
-                triangle.IsBackFaced = z >= 0;
+                triangle.IsBackFaced = Math.Round(n.Z, 1) >= 0;
             }
+
+            //Logger.Value("culled triangles", Triangles.Count(x => x.IsBackFaced));
+            Logger.Value("valid triangles", Triangles.Count(x => !x.IsBackFaced));
         }
 
-        private void Project(Vector3 camera, double scale)
+        /// <summary>
+        /// Sort the triangles descending by the sum of all vertices Z value
+        /// </summary>
+        private void SortDepthBuffer()
+        {
+            Triangles.Sort(delegate(Triangle a, Triangle b)
+            {
+                double zSumA = a.Vertices.Max(t => t.Transformed.Z);
+                double zSumB = b.Vertices.Max(t => t.Transformed.Z);
+
+                return zSumB.CompareTo(zSumA);
+            });
+        }
+
+        private void ProjectVertices(Vector3 camera, double scale)
         {
             foreach (Vertex vertex in Vertices)
             {
@@ -132,8 +185,8 @@ namespace TechEngine.Engine
                 vertex.Projected.Y = -(int)(((camera.Z * (vertex.Transformed.Y - camera.Y)) / pz * scale) + camera.Y);
 
                 // Scaling and positioning
-                vertex.Projected.X += (int)(Position.X + 640 / 2);
-                vertex.Projected.Y += (int)(Position.Y + 480 / 2);
+                vertex.Projected.X += (int)(640 / 2);
+                vertex.Projected.Y += (int)(480 / 2);
             }
         }
 
@@ -151,7 +204,9 @@ namespace TechEngine.Engine
 
             BackfaceCulling();
 
-            Project(camera, scale);
+            SortDepthBuffer();
+
+            ProjectVertices(camera, scale);
         }
     }
 }
