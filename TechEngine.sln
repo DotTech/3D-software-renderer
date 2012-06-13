@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechEngine", "TechEngine.Testing\TechEngine.csproj", "{E09FE006-DBC0-46C5-BB78-FB06A4BAA033}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechEngine.Converter", "TechEngine.Converter\TechEngine.Converter.csproj", "{0AF94E56-4BA8-4531-B32F-CCA13B5B5448}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechEngine", "TechEngine\TechEngine.csproj", "{E09FE006-DBC0-46C5-BB78-FB06A4BAA033}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		{E09FE006-DBC0-46C5-BB78-FB06A4BAA033}.Debug|x86.Build.0 = Debug|x86
 		{E09FE006-DBC0-46C5-BB78-FB06A4BAA033}.Release|x86.ActiveCfg = Release|x86
 		{E09FE006-DBC0-46C5-BB78-FB06A4BAA033}.Release|x86.Build.0 = Release|x86
-		{0AF94E56-4BA8-4531-B32F-CCA13B5B5448}.Debug|x86.ActiveCfg = Debug|x86
-		{0AF94E56-4BA8-4531-B32F-CCA13B5B5448}.Debug|x86.Build.0 = Debug|x86
-		{0AF94E56-4BA8-4531-B32F-CCA13B5B5448}.Release|x86.ActiveCfg = Release|x86
-		{0AF94E56-4BA8-4531-B32F-CCA13B5B5448}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
