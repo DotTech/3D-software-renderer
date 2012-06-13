@@ -102,84 +102,84 @@ namespace TechEngine.Engine
             model.AddVertex(100, -100, -100);   // 6
             model.AddVertex(100, -100, 100);    // 7
 
-            int? fillColor1 = Color.FromArgb(140, 140, 140).ToArgb();
-            int? fillColor2 = Color.FromArgb(120, 120, 120).ToArgb();
-            int? fillColor3 = Color.FromArgb(100, 100, 100).ToArgb();
-            int borderColor = Color.Red.ToArgb();
+            //int? fillColor1 = Color.FromArgb(140, 140, 140).ToArgb();
+            //int? fillColor2 = Color.FromArgb(120, 120, 120).ToArgb();
+            //int? fillColor3 = Color.FromArgb(100, 100, 100).ToArgb();
+            //int borderColor = Color.Red.ToArgb();
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[0],
-                model.Vertices[1],
-                model.Vertices[2],
-                borderColor, fillColor1));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[0],
+            //    model.Vertices[1],
+            //    model.Vertices[2],
+            //    borderColor, fillColor1));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[1],
-                model.Vertices[6],
-                model.Vertices[2],
-                borderColor, fillColor1));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[1],
+            //    model.Vertices[6],
+            //    model.Vertices[2],
+            //    borderColor, fillColor1));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[1],
-                model.Vertices[4],
-                model.Vertices[6],
-                borderColor, fillColor2));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[1],
+            //    model.Vertices[4],
+            //    model.Vertices[6],
+            //    borderColor, fillColor2));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[4],
-                model.Vertices[7],
-                model.Vertices[6],
-                borderColor, fillColor2));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[4],
+            //    model.Vertices[7],
+            //    model.Vertices[6],
+            //    borderColor, fillColor2));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[4],
-                model.Vertices[3],
-                model.Vertices[7],
-                borderColor, fillColor1));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[4],
+            //    model.Vertices[3],
+            //    model.Vertices[7],
+            //    borderColor, fillColor1));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[3],
-                model.Vertices[5],
-                model.Vertices[7],
-                borderColor, fillColor1));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[3],
+            //    model.Vertices[5],
+            //    model.Vertices[7],
+            //    borderColor, fillColor1));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[3],
-                model.Vertices[0],
-                model.Vertices[5],
-                borderColor, fillColor2));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[3],
+            //    model.Vertices[0],
+            //    model.Vertices[5],
+            //    borderColor, fillColor2));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[0],
-                model.Vertices[2],
-                model.Vertices[5],
-                borderColor, fillColor2));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[0],
+            //    model.Vertices[2],
+            //    model.Vertices[5],
+            //    borderColor, fillColor2));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[3],
-                model.Vertices[4],
-                model.Vertices[0],
-                borderColor, fillColor3));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[3],
+            //    model.Vertices[4],
+            //    model.Vertices[0],
+            //    borderColor, fillColor3));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[4],
-                model.Vertices[1],
-                model.Vertices[0],
-                borderColor, fillColor3));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[4],
+            //    model.Vertices[1],
+            //    model.Vertices[0],
+            //    borderColor, fillColor3));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[2],
-                model.Vertices[6],
-                model.Vertices[5],
-                borderColor, fillColor3));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[2],
+            //    model.Vertices[6],
+            //    model.Vertices[5],
+            //    borderColor, fillColor3));
 
-            model.Triangles.Add(new Triangle(
-                model.Vertices[6],
-                model.Vertices[7],
-                model.Vertices[5],
-                borderColor, fillColor3));
+            //model.Triangles.Add(new Triangle(
+            //    model.Vertices[6],
+            //    model.Vertices[7],
+            //    model.Vertices[5],
+            //    borderColor, fillColor3));
 
-            model.CenterModel();
+            //model.CenterModel();
 
             return model;
         }
@@ -187,18 +187,18 @@ namespace TechEngine.Engine
         public static Model CreateTestObject()
         {
             var model = new Model();
-            model.Rotation = new Vector3(0, 0, 0); //new Vector3(81, 358, 351);
+            model.Rotation = new Vector3(0, 0, 0);
 
-            model.AddVertex(-100, 100, -100);   // 0
-            model.AddVertex(100, 100, -100);    // 1
-            model.AddVertex(-100, -100, -100);  // 2
-            model.AddVertex(-100, 100, 100);    // 3
-            model.AddVertex(100, 100, 100);     // 4
-            model.AddVertex(-100, -100, 100);   // 5            
-            model.AddVertex(100, -100, -100);   // 6
-            model.AddVertex(100, -100, 100);    // 7
-            model.AddVertex(0, 150, 0);         // 8
-            model.AddVertex(0, -50, 0);         // 9
+            model.AddVertex(-100, 100, -100, 1);    // 0
+            model.AddVertex(100, 100, -100, 0.9);   // 1
+            model.AddVertex(-100, -100, -100, 0.8); // 2
+            model.AddVertex(-100, 100, 100, 0.7);   // 3
+            model.AddVertex(100, 100, 100, 0.6);    // 4
+            model.AddVertex(-100, -100, 100, 0.5);  // 5            
+            model.AddVertex(100, -100, -100, 0.4);  // 6
+            model.AddVertex(100, -100, 100, 0.3);   // 7
+            model.AddVertex(0, 150, 0, 0.2);        // 8
+            model.AddVertex(0, -50, 0, 0.1);        // 9
 
             model.AddTriangle(0, 1, 2);
             model.AddTriangle(1, 6, 2);

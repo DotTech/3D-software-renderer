@@ -117,16 +117,16 @@ namespace TechEngine.Engine
         /// <param name="model"></param>
         public void DrawModel(Model model)
         {
-            foreach (Vertex v in model.Vertices)
-            {
-                DrawPixel(v.Projected, Color.Red.ToArgb());
-            }
+            //foreach (Vertex v in model.Vertices)
+            //{
+            //    DrawPixel(v.Projected, Color.Red.ToArgb());
+            //}
             
             int c = 0;
 
             foreach (Triangle t in model.Triangles.Where(x => !x.IsBackFaced))
             {
-                DrawTriangle(t);
+                DrawTriangle(model, t);
                 c++;
             }
 
@@ -140,7 +140,7 @@ namespace TechEngine.Engine
         /// <param name="vertices"></param>
         /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void DrawTriangle(Triangle triangle)
+        public void DrawTriangle(Model model, Triangle triangle)
         {
             Vertex[] sortedv = new Vertex[3];
             triangle.Vertices.CopyTo(sortedv, 0);
@@ -162,38 +162,17 @@ namespace TechEngine.Engine
             double sx = (double)a.X;
             double sy = (double)a.Y;
 
-            // Calculate color value using vertex intensity value
-            int? fillcolor = triangle.FillColor;
-            if (fillcolor != null)
-            {
-                fillcolor = CalculateColor(fillcolor.Value, sortedv);
-            }
-
             for (; sy <= b.Y; sy++, sx += dx1, ex += dx2)
             {
-                DrawTriangleScanline(sx, ex, sy, triangle.BorderColor, fillcolor);
+                DrawTriangleScanline(sx, ex, sy, model.LineColor, triangle.ShadedFillColor);
             }
 
             sx = b.X;
 
             for (; sy <= c.Y; sy++, sx += dx3, ex += dx2)
             {
-                DrawTriangleScanline(sx, ex, sy, triangle.BorderColor, fillcolor);
+                DrawTriangleScanline(sx, ex, sy, model.LineColor, triangle.ShadedFillColor);
             }
-        }
-
-        private int CalculateColor(int source, Vertex[] vertices)
-        {
-            int color = source;
-            double avgintensity = vertices.Select(v => v.Intensity).Average();
-
-            if (avgintensity < 1)
-            {
-                Color c = Color.FromArgb(color);
-                color = Color.FromArgb((int)((double)c.R * avgintensity), (int)((double)c.G * avgintensity), (int)((double)c.B * avgintensity)).ToArgb();
-            }
-
-            return color;
         }
 
         /// <summary>
@@ -204,7 +183,7 @@ namespace TechEngine.Engine
         /// <param name="y"></param>
         /// <param name="bordercolor"></param>
         /// <param name="fillcolor"></param>
-        private void DrawTriangleScanline(double x0, double x1, double y, int bordercolor, int? fillcolor)
+        private void DrawTriangleScanline(double x0, double x1, double y, int? linecolor, int? fillcolor)
         {
             int sx = (int)x0;
             int ex = (int)x1;
@@ -215,8 +194,11 @@ namespace TechEngine.Engine
                 DrawLine(sx, sy, ex, sy, fillcolor.Value);
             }
 
-            //DrawPixel(sx, sy, bordercolor);
-            //DrawPixel(ex, sy, bordercolor);
+            if (linecolor.HasValue)
+            {
+                DrawPixel(sx, sy, linecolor.Value);
+                DrawPixel(ex, sy, linecolor.Value);
+            }
         }
     }
 }

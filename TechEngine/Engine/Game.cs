@@ -23,8 +23,12 @@ namespace TechEngine.Engine
             Setup();
 
             var sw = Stopwatch.StartNew();
-            //model = ModelFactory.CreateTestObject();
-            model = ModelFactory.CreateFromFile("bunny.ply", 1000);
+            model = ModelFactory.CreateTestObject();
+            //model = ModelFactory.CreateFromFile("bunny.ply", 1000);
+            model.FillColor = Color.Gray.ToArgb();
+            model.LineColor = Color.Red.ToArgb();
+            model.CalculateColors();
+
             //model = ModelFactory.CreateFromFile(@"C:\Users\Ruud\Desktop\Armadillo2.ply", 5);
             //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\horseasc.ply", 1000);
             //model = ModelFactory.CreateFromFile(@"g:\Data\Projects\3D\3dconverter\models\ateneav.ply", 0.1);

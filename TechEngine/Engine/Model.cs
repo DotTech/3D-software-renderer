@@ -26,6 +26,9 @@ namespace TechEngine.Engine
 
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
+
+        public int? LineColor { get; set; }
+        public int? FillColor { get; set; }
         
         public Model()
         {
@@ -44,7 +47,7 @@ namespace TechEngine.Engine
 
         public void AddTriangle(int v0, int v1, int v2)
         {
-            Triangles.Add(new Triangle(Vertices[v0], Vertices[v1], Vertices[v2], Color.Red.ToArgb(), Color.Gray.ToArgb()));
+            Triangles.Add(new Triangle(Vertices[v0], Vertices[v1], Vertices[v2]));
         }
 
         /// <summary>
@@ -173,6 +176,21 @@ namespace TechEngine.Engine
 
                 return zSumB.CompareTo(zSumA);
             });
+        }
+
+        /// <summary>
+        /// Call once after loading the model
+        /// </summary>
+        public void CalculateColors()
+        {
+            // Calculate color value using vertex intensity value
+            if (FillColor != null)
+            {
+                Triangles
+                    .Where(x => !x.IsBackFaced)
+                    .ToList()
+                    .ForEach(x => x.CalculateFillColor(FillColor.Value));
+            }
         }
 
         private void ProjectVertices(Vector3 camera, double scale)
